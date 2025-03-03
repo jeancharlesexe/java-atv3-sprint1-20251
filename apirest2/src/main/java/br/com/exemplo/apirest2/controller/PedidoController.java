@@ -1,9 +1,11 @@
 package br.com.exemplo.apirest2.controller;
 
+import br.com.exemplo.apirest2.dto.PedidoInput;
 import br.com.exemplo.apirest2.model.Pedido;
 import br.com.exemplo.apirest2.model.Produto;
 import br.com.exemplo.apirest2.service.PedidoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,15 +34,14 @@ public class PedidoController {
          return ResponseEntity.ok(pedido.get());
     }
 
-    @PostMapping("/{clienteId}")
-    public ResponseEntity<Pedido> salvar(@PathVariable Long clienteId, @RequestBody List<Long> produtosIds) {
-        Pedido pedido =  pedidoService.salvar(clienteId, produtosIds);
-
-        if(pedido == null) {
+    @PostMapping
+    public ResponseEntity<Pedido> salvar(@RequestBody PedidoInput pedidoInput) {
+        try {
+            Pedido pedido = pedidoService.salvar(pedidoInput.getClienteId(), pedidoInput.getProdutosIds());
+            return ResponseEntity.status(HttpStatus.CREATED).body(pedido);
+        } catch (RuntimeException e) {
             return ResponseEntity.badRequest().build();
         }
-
-        return ResponseEntity.ok(pedido);
     }
 
     @DeleteMapping("/{id}")

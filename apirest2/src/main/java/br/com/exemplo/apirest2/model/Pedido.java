@@ -1,5 +1,6 @@
 package br.com.exemplo.apirest2.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;

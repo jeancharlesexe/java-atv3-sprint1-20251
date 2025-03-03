@@ -36,14 +36,12 @@ public class PedidoService {
     }
 
     public Pedido salvar(Long clienteId, List<Long> produtosIds) {
-        Cliente cliente = clienteRepository.getReferenceById(clienteId);
-        if(cliente == null) {
-            throw new RuntimeException("Cliente não encontrado");
-        }
+        Cliente cliente = clienteRepository.findById(clienteId)
+                .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
 
         List<Produto> produtos = produtoRepository.findAllById(produtosIds);
         if(produtos.size() != produtosIds.size()) {
-            throw new RuntimeException("Algum produto nao foi encontrado");
+            throw new RuntimeException("Algum produto não foi encontrado");
         }
 
         Pedido pedido = new Pedido();
