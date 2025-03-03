@@ -9,6 +9,7 @@ import br.com.exemplo.apirest2.repository.ProdutoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,9 +40,23 @@ public class PedidoService {
         Cliente cliente = clienteRepository.findById(clienteId)
                 .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
 
-        List<Produto> produtos = produtoRepository.findAllById(produtosIds);
-        if(produtos.size() != produtosIds.size()) {
+        Long produtosEncontrados = 0L;
+        for(Long produtoId : produtosIds) {
+            if(produtoRepository.existsById(produtoId)) {
+                produtosEncontrados++;
+            }
+        }
+
+        if(produtosEncontrados != produtosIds.size()) {
             throw new RuntimeException("Algum produto não foi encontrado");
+        }
+
+        List<Produto> produtos = new ArrayList<>();
+        for(Long produtoId : produtosIds) {
+            Optional<Produto> produtoEncontrado = produtoRepository.findById(produtoId);
+            if(produtoEncontrado.isPresent()) {
+                produtos.add(produtoEncontrado.get());
+            }
         }
 
         Pedido pedido = new Pedido();
